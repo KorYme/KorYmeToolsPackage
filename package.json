@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/{{COMPANY}}/{{REPOSITORY_NAME}}.git"
+    "url": "https://github.com/KorYme/com.koryme.toolpackage.git"
   },
   "license": "MIT",
   "type": "library",
