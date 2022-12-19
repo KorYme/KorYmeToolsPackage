@@ -1,9 +1,7 @@
 {
     "name": "koryme.toolpackage",
     "rootNamespace": "",
-    "references": [
-        "GUID:3f4d89f04a04fd94c8d8266c0b8f30b9"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
