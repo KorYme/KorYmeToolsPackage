@@ -25,7 +25,7 @@ public class PrefabsModificationsEditorWindow : EditorWindow
     SerializedObject _thisObject;
     SerializedProperty _folderPathProperty;
 
-    [MenuItem("Fabien's courses/GD Tools/Prefabs Modifications")]
+    [MenuItem("Tools/KorYmeTools/Prefabs Modifications")]
     public static void OpenWindow()
     {
         PrefabsModificationsEditorWindow window = CreateWindow<PrefabsModificationsEditorWindow>("Prefabs Modifications");
