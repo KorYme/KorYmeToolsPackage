@@ -1,7 +1,7 @@
 {
   "name": "com.koryme.toolpackage",
   "displayName": "KorYme Toolkit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "unity": "2021.3",
   "description": "My own tool kit for Unity",
   "author": "KorYme_NakXay",
