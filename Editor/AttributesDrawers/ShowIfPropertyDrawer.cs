@@ -1,15 +1,15 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomPropertyDrawer(typeof(DrawIfAttribute))]
-public class DrawIfPropertyDrawer : PropertyDrawer
+[CustomPropertyDrawer(typeof(ShowIfAttribute))]
+public class ShowIfPropertyDrawer : PropertyDrawer
 {
-    private DrawIfAttribute drawIfAttribute;
+    private ShowIfAttribute drawIfAttribute;
     SerializedProperty comparedField;
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        drawIfAttribute = attribute as DrawIfAttribute;
+        drawIfAttribute = attribute as ShowIfAttribute;
         if ((ShowMe(property) && drawIfAttribute.trueCaseDisablingType == DisablingType.DontDraw)
             || (!ShowMe(property) && drawIfAttribute.falseCaseDisablingType == DisablingType.DontDraw))
         {
@@ -20,17 +20,20 @@ public class DrawIfPropertyDrawer : PropertyDrawer
 
     public bool ShowMe(SerializedProperty property)
     {
-        drawIfAttribute = attribute as DrawIfAttribute;
+        drawIfAttribute = attribute as ShowIfAttribute;
         if (drawIfAttribute.simpleBoolean) return true;
         string path = property.propertyPath.Contains(".") ? 
             System.IO.Path.ChangeExtension(property.propertyPath, drawIfAttribute.comparedPropertyName) : 
             drawIfAttribute.comparedPropertyName;
         comparedField = property.serializedObject.FindProperty(path);
-
         if (comparedField == null)
         {
             Debug.LogError("Cannot find property with name: " + path);
             return false;
+        }
+        if (drawIfAttribute.comparedValues.Length == 0 && comparedField.type == "bool")
+        {
+            return comparedField.boolValue;
         }
         foreach (object item in drawIfAttribute.comparedValues)
         {
@@ -90,7 +93,7 @@ public class DrawIfPropertyDrawer : PropertyDrawer
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        drawIfAttribute = attribute as DrawIfAttribute;
+        drawIfAttribute = attribute as ShowIfAttribute;
         if (ShowMe(property))
         {
             switch (drawIfAttribute.trueCaseDisablingType)

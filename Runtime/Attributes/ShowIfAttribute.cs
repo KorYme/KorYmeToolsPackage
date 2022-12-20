@@ -5,10 +5,10 @@ using UnityEngine;
 /// <summary>
 /// Has to be a serialized field
 /// Don't draw the field if the condition is not filled
-/// Else choose if it has to be readonly or simply drawned
+/// Else choose if it has to be readonly or not drawn
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
-public class DrawIfAttribute : PropertyAttribute
+public class ShowIfAttribute : PropertyAttribute
 {
     public string comparedPropertyName;
     public object[] comparedValues;
@@ -17,8 +17,28 @@ public class DrawIfAttribute : PropertyAttribute
     public DisablingType trueCaseDisablingType;
     public DisablingType falseCaseDisablingType;
 
-    public DrawIfAttribute(string comparedPropertyName, object comparedValue, ComparisonType comparisonType = ComparisonType.Equals,
-        DisablingType trueCaseDisablingType = DisablingType.Draw, DisablingType falseCaseDisablingType = DisablingType.DontDraw)
+    public ShowIfAttribute(string comparedPropertyName)
+    {
+        this.comparedPropertyName = comparedPropertyName;
+        this.comparedValues = new object[] { };
+        this.comparisonType = ComparisonType.Equals;
+        this.trueCaseDisablingType = DisablingType.Draw;
+        this.falseCaseDisablingType = DisablingType.DontDraw;
+        simpleBoolean = false;
+    }
+
+    public ShowIfAttribute(string comparedPropertyName, object comparedValue) 
+    {
+        this.comparedPropertyName = comparedPropertyName;
+        this.comparedValues = new object[] { comparedValue };
+        this.comparisonType = ComparisonType.Equals;
+        this.trueCaseDisablingType = DisablingType.Draw;
+        this.falseCaseDisablingType = DisablingType.DontDraw;
+        simpleBoolean = false;
+    }
+
+    public ShowIfAttribute(string comparedPropertyName, object comparedValue, DisablingType falseCaseDisablingType = DisablingType.Draw,
+        DisablingType trueCaseDisablingType = DisablingType.DontDraw, ComparisonType comparisonType = ComparisonType.Equals)
     {
         this.comparedPropertyName = comparedPropertyName;
         this.comparedValues = new object[] {comparedValue};
@@ -28,7 +48,7 @@ public class DrawIfAttribute : PropertyAttribute
         simpleBoolean = false;
     }
     
-    public DrawIfAttribute(string comparedPropertyName, object[] comparedValue, ComparisonType comparisonType = ComparisonType.Equals,
+    public ShowIfAttribute(string comparedPropertyName, object[] comparedValue, ComparisonType comparisonType = ComparisonType.Equals,
         DisablingType trueCaseDisablingType = DisablingType.Draw, DisablingType falseCaseDisablingType = DisablingType.DontDraw)
     {
         this.comparedPropertyName = comparedPropertyName;
@@ -39,7 +59,17 @@ public class DrawIfAttribute : PropertyAttribute
         simpleBoolean = false;
     }
 
-    public DrawIfAttribute(bool simpleBoolean,
+    public ShowIfAttribute(bool simpleBoolean)
+    {
+        this.comparedPropertyName = null;
+        this.comparedValues = null;
+        this.comparisonType = ComparisonType.Equals;
+        this.simpleBoolean = simpleBoolean;
+        this.trueCaseDisablingType = DisablingType.Draw;
+        this.falseCaseDisablingType = DisablingType.DontDraw;
+    }
+
+    public ShowIfAttribute(bool simpleBoolean,
     DisablingType trueCaseDisablingType = DisablingType.Draw, DisablingType falseCaseDisablingType = DisablingType.DontDraw)
     {
         this.comparedPropertyName = null;

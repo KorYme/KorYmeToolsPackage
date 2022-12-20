@@ -183,7 +183,7 @@ public class SceneModificationsEditorWindow : EditorWindow
             {
                 foreach (MemberInfo member in type.GetMembers(UtilitiesClass.FLAGS_FIELDS))
                 {
-                    if (member.GetCustomAttribute<GDModifAttribute>() != null)
+                    if (member.GetCustomAttribute<SceneModificationAttribute>() != null)
                     {
                         if (!_allTypes.Contains(type))
                         {
@@ -209,20 +209,20 @@ public class SceneModificationsEditorWindow : EditorWindow
                 {
                     if (member.CustomAttributes.ToArray().Length > 0)
                     {
-                        GDModifAttribute attribute = member.GetCustomAttribute<GDModifAttribute>();
+                        SceneModificationAttribute attribute = member.GetCustomAttribute<SceneModificationAttribute>();
 
                         if (attribute != null)
                         {
-                            if (!attribute._isASceneObject)
-                            {
-                                continue;
-                            }
-                            if (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property)
+                            if (attribute._objectLocation != ObjectLocation.Project && (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property))
                             {
                                 allFields.Add((FieldInfo)member);
                             }
                         }
                     }
+                }
+                if (allFields.Count == 0)
+                {
+                    continue;
                 }
                 if (!_allComponents.ContainsKey(component.gameObject))
                 {
@@ -306,7 +306,7 @@ public class SceneModificationsEditorWindow : EditorWindow
                     {
                         if (member.CustomAttributes.ToArray().Length > 0)
                         {
-                            GDModifAttribute attribute = member.GetCustomAttribute<GDModifAttribute>();
+                            SceneModificationAttribute attribute = member.GetCustomAttribute<SceneModificationAttribute>();
                             if (attribute != null)
                             {
                                 if (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property)
