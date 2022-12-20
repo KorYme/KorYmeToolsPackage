@@ -1,12 +1,15 @@
 using System;
 using UnityEngine;
 
-public class ForceInterfaceAttribute : PropertyAttribute
+namespace ToolLibrary
 {
-    public readonly Type interfaceType;
-
-    public ForceInterfaceAttribute(Type interfaceType)
+    public class ForceInterfaceAttribute : PropertyAttribute
     {
-        this.interfaceType = interfaceType;
+        public readonly Type interfaceType;
+
+        public ForceInterfaceAttribute(Type interfaceType)
+        {
+            this.interfaceType = interfaceType;
+        }
     }
 }

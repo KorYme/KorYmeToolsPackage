@@ -8,9 +8,11 @@ namespace ToolLibrary
 {
     public enum ObjectLocation
     {
-        Scene,
-        Project,
-        Both,
+        Scene = 1,
+        PrefabsFolder = 2,
+        ResourcesFolder = 4,
+        Other = 8,
+        All = 16,
     }
 
     [AttributeUsage(AttributeTargets.Field)]
@@ -18,7 +20,7 @@ namespace ToolLibrary
     {
         public ObjectLocation _objectLocation;
 
-        public SceneModificationAttribute(ObjectLocation objectLocation = ObjectLocation.Both)
+        public SceneModificationAttribute(ObjectLocation objectLocation = ObjectLocation.All)
         {
             _objectLocation = objectLocation;
         }

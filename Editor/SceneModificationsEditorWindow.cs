@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using ToolLibrary;
+using System.IO;
 
 public class SceneModificationsEditorWindow : EditorWindow
 {
@@ -14,6 +15,8 @@ public class SceneModificationsEditorWindow : EditorWindow
     bool _isHierarchised;
     Color _colorGameObjectLabel;
     Color _colorComponentLabel;
+    ObjectLocation _location;
+    string _path;
     #endregion
 
     #region CONTAINERS
@@ -76,12 +79,22 @@ public class SceneModificationsEditorWindow : EditorWindow
         {
             EditorGUI.indentLevel++;
             _isHierarchised = EditorGUILayout.ToggleLeft(new GUIContent("Hierarchy"), _isHierarchised);
+            EditorGUI.BeginChangeCheck();
+            _location = (ObjectLocation)EditorGUILayout.EnumPopup("Objects locations", _location);
+            if (_location == ObjectLocation.Other || _location == ObjectLocation.All)
+            {
+                _path = EditorGUILayout.TextField("Path", _path);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                InitDictionary();
+            }
             _colorGameObjectLabel = EditorGUILayout.ColorField(new GUIContent("Parameters color"), _colorGameObjectLabel);
             _colorComponentLabel = EditorGUILayout.ColorField(new GUIContent("Parameters color"), _colorComponentLabel);
             EditorGUI.indentLevel--;
         }
         EditorGUILayout.Space(15);
-        EditorGUILayout.LabelField("[ALLFIELDS]", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField($"[ALLFIELDS({_location})]", EditorStyles.boldLabel);
         EditorGUI.indentLevel++;
         EditorGUILayout.BeginVertical();
         if (!_isHierarchised)
@@ -123,7 +136,6 @@ public class SceneModificationsEditorWindow : EditorWindow
         }
         else
         {
-
             foreach (Node node in _allNodes.Where(x=>x._isOriginal).OrderBy(x => x._go.transform.GetSiblingIndex()))
             {
                 EditorGUILayout.Space(10);
@@ -200,9 +212,37 @@ public class SceneModificationsEditorWindow : EditorWindow
         _allComponents.Clear();
         _foldoutComponent.Clear();
         _foldoutGameObject.Clear();
+        List<Component> allComponents = new();
         foreach (Type type in _allTypes)
         {
+            //foreach (GameObject gameObject in Resources.LoadAll<GameObject>(""))
+            //{
+            //    foreach (Component component in gameObject.GetComponents(type))
+            //    {
+            //        allComponents.Add(component);
+            //    }
+            //}
             foreach (Component component in FindObjectsOfType(type))
+            {
+                allComponents.Add(component);
+            }
+            string[] search_results = System.IO.Directory.GetFiles("Assets/", "*.prefab", System.IO.SearchOption.AllDirectories);
+            for (int i = 0; i < search_results.Length; i++)
+            {
+                foreach (Component component in ((GameObject)AssetDatabase.LoadAssetAtPath(search_results[i], typeof(GameObject))).GetComponents(type))
+                {
+                    allComponents.Add(component);
+                }
+            }
+            //search_results = System.IO.Directory.GetFiles($"Assets/{_path}", "*.prefab", System.IO.SearchOption.AllDirectories);
+            //for (int i = 0; i < search_results.Length; i++)
+            //{
+            //    foreach (Component component in ((GameObject)AssetDatabase.LoadAssetAtPath(search_results[i], typeof(GameObject))).GetComponents(type))
+            //    {
+            //        allComponents.Add(component);
+            //    }
+            //}
+            foreach (Component component in allComponents)
             {
                 List<FieldInfo> allFields = new();
                 foreach (MemberInfo member in component.GetType().GetMembers(UtilitiesClass.FLAGS_FIELDS))
@@ -213,7 +253,8 @@ public class SceneModificationsEditorWindow : EditorWindow
 
                         if (attribute != null)
                         {
-                            if (attribute._objectLocation != ObjectLocation.Project && (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property))
+                            if ((attribute._objectLocation != _location || attribute._objectLocation == ObjectLocation.All) 
+                                && (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property))
                             {
                                 allFields.Add((FieldInfo)member);
                             }

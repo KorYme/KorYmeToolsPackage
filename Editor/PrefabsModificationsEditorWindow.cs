@@ -79,7 +79,6 @@ public class PrefabsModificationsEditorWindow : EditorWindow
         {
             UpdateList();
         }
-
         EditorGUILayout.Space(15);
         EditorGUILayout.LabelField("AllPrefabs", EditorStyles.boldLabel);
         EditorGUILayout.Space(10);
@@ -87,6 +86,28 @@ public class PrefabsModificationsEditorWindow : EditorWindow
         foreach (GameObject gameObject in _prefabs)
         {
             using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("GameObject", gameObject, typeof(GameObject), false);
+            foreach (Component component in gameObject.GetComponents(typeof(Component)))
+            {
+                if (_allTypes.Contains(component.GetType()))
+                {
+                    List<FieldInfo> allFields = new();
+                    foreach (MemberInfo member in component.GetType().GetMembers(UtilitiesClass.FLAGS_FIELDS))
+                    {
+                        if (member.CustomAttributes.ToArray().Length > 0)
+                        {
+                            SceneModificationAttribute attribute = member.GetCustomAttribute<SceneModificationAttribute>();
+
+                            if (attribute != null)
+                            {
+                                if (attribute._objectLocation != ObjectLocation.PrefabsFolder && (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property))
+                                {
+                                    allFields.Add((FieldInfo)member);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         EditorGUI.EndChangeCheck();
         EditorGUILayout.EndScrollView();
