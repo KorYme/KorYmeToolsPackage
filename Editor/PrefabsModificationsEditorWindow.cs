@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 public class PrefabsModificationsEditorWindow : EditorWindow
 {
@@ -19,7 +20,8 @@ public class PrefabsModificationsEditorWindow : EditorWindow
     }
 
     public PREFABS_FOLDERS _prefabsFolders;
-    public List<GameObject> _prefabs;
+    public List<GameObject> _prefabs = new();
+    public List<Type> _allTypes = new();
 
 
     SerializedObject _thisObject;
@@ -35,6 +37,28 @@ public class PrefabsModificationsEditorWindow : EditorWindow
     {
         _thisObject = new(this);
         _folderPathProperty = _thisObject.FindProperty("_prefabsFolders");
+        InitTypes();
+    }
+
+    private void InitTypes()
+    {
+        _allTypes.Clear();
+        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            foreach (Type type in assembly.GetTypes())
+            {
+                foreach (MemberInfo member in type.GetMembers(UtilitiesClass.FLAGS_FIELDS))
+                {
+                    if (member.GetCustomAttribute<SceneModificationAttribute>() != null)
+                    {
+                        if (!_allTypes.Contains(type))
+                        {
+                            _allTypes.Add(type);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void OnGUI()
@@ -48,6 +72,7 @@ public class PrefabsModificationsEditorWindow : EditorWindow
         if (EditorGUI.EndChangeCheck())
         {
             _thisObject.ApplyModifiedProperties();
+            UpdateList();
         }
         EditorGUILayout.Space(5);
         if (GUILayout.Button("Refresh"))
@@ -57,6 +82,13 @@ public class PrefabsModificationsEditorWindow : EditorWindow
 
         EditorGUILayout.Space(15);
         EditorGUILayout.LabelField("AllPrefabs", EditorStyles.boldLabel);
+        EditorGUILayout.Space(10);
+        EditorGUI.BeginChangeCheck();
+        foreach (GameObject gameObject in _prefabs)
+        {
+            using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("GameObject", gameObject, typeof(GameObject), false);
+        }
+        EditorGUI.EndChangeCheck();
         EditorGUILayout.EndScrollView();
     }
 
@@ -86,7 +118,6 @@ public class PrefabsModificationsEditorWindow : EditorWindow
         for (int i = 0; i < tmp.Length; i++)
         {
             _prefabs.Add(tmp[i]);
-            Debug.Log(_prefabs[i].name);
         }
     }
 
@@ -96,7 +127,6 @@ public class PrefabsModificationsEditorWindow : EditorWindow
         for (int i = 0; i < search_results.Length; i++)
         {
             _prefabs.Add((GameObject)AssetDatabase.LoadAssetAtPath(search_results[i], typeof(GameObject)));
-            Debug.Log(_prefabs[i].name);
         }
     }
 }
