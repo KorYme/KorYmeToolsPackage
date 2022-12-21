@@ -99,7 +99,7 @@ public class PrefabsModificationsEditorWindow : EditorWindow
 
                             if (attribute != null)
                             {
-                                if (attribute._objectLocation != ObjectLocation.PrefabsFolder && (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property))
+                                if (attribute._objectLocation != ObjectLocation.Both && (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property))
                                 {
                                     allFields.Add((FieldInfo)member);
                                 }

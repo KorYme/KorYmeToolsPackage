@@ -16,7 +16,6 @@ public class SceneModificationsEditorWindow : EditorWindow
     Color _colorGameObjectLabel;
     Color _colorComponentLabel;
     ObjectLocation _location;
-    string _path;
     #endregion
 
     #region CONTAINERS
@@ -34,7 +33,7 @@ public class SceneModificationsEditorWindow : EditorWindow
         }
     }
     List<Type> _allTypes = new();
-    Dictionary<GameObject, Dictionary<Component, Tuple<SerializedObject, List<FieldInfo>>>> _allComponents = new();
+    Dictionary<GameObject, Dictionary<Component, Tuple<SerializedObject, List<Tuple<FieldInfo, SceneModificationAttribute>>>>> _allComponentsInScene = new();
     Dictionary<GameObject, bool> _foldoutGameObject = new();
     Dictionary<Component, bool> _foldoutComponent = new();
     List<Node> _allNodes = new();
@@ -50,6 +49,7 @@ public class SceneModificationsEditorWindow : EditorWindow
     public void OnEnable()
     {
         InitAllContainers();
+        _location = ObjectLocation.Both;
         if (_colorComponentLabel == Color.clear && _colorGameObjectLabel == Color.clear)
         {
             _colorGameObjectLabel = Color.red;
@@ -57,10 +57,9 @@ public class SceneModificationsEditorWindow : EditorWindow
         }
     }
 
-    private void OnHierarchyChange()
-    {
-        CheckAllContainers();
-    }
+    private void OnHierarchyChange() => CheckAllContainers();
+
+    private void OnProjectChange() => CheckAllContainers();
 
     private void OnGUI()
     {
@@ -81,10 +80,6 @@ public class SceneModificationsEditorWindow : EditorWindow
             _isHierarchised = EditorGUILayout.ToggleLeft(new GUIContent("Hierarchy"), _isHierarchised);
             EditorGUI.BeginChangeCheck();
             _location = (ObjectLocation)EditorGUILayout.EnumPopup("Objects locations", _location);
-            if (_location == ObjectLocation.Other || _location == ObjectLocation.All)
-            {
-                _path = EditorGUILayout.TextField("Path", _path);
-            }
             if (EditorGUI.EndChangeCheck())
             {
                 InitDictionary();
@@ -99,7 +94,7 @@ public class SceneModificationsEditorWindow : EditorWindow
         EditorGUILayout.BeginVertical();
         if (!_isHierarchised)
         {
-            foreach (GameObject gameObject in _allComponents.Keys.ToArray().OrderBy(x => x.transform.GetSiblingIndex()))
+            foreach (GameObject gameObject in _allComponentsInScene.Keys.ToArray().OrderBy(x => x.transform.GetSiblingIndex()))
             {
                 EditorGUILayout.Space(10);
                 if (_foldoutGameObject[gameObject] = EditorGUILayout.Foldout(_foldoutGameObject[gameObject],
@@ -109,7 +104,7 @@ public class SceneModificationsEditorWindow : EditorWindow
                     EditorGUILayout.Space(10);
                     using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("GameObject",
                         gameObject, typeof(GameObject), false);
-                    foreach (Component component in _allComponents[gameObject].Keys.ToArray().OrderBy(x => x.name))
+                    foreach (Component component in _allComponentsInScene[gameObject].Keys.ToArray().OrderBy(x => x.name))
                     {
                         EditorGUILayout.Space(2);
                         if (_foldoutComponent[component] = EditorGUILayout.Foldout(_foldoutComponent[component],
@@ -117,14 +112,16 @@ public class SceneModificationsEditorWindow : EditorWindow
                             true, UtilitiesClass.ToRichText("foldout")))
                         {
                             EditorGUI.indentLevel++;
-                            foreach (FieldInfo field in _allComponents[gameObject][component].Item2)
+                            foreach (Tuple<FieldInfo, SceneModificationAttribute> tuple in _allComponentsInScene[gameObject][component].Item2)
                             {
-                                SerializedProperty serializedProperty = _allComponents[gameObject][component].Item1.FindProperty(field.Name);
+                                if ((tuple.Item2._objectLocation == ObjectLocation.Project && gameObject.scene.name != null) || 
+                                    (tuple.Item2._objectLocation == ObjectLocation.Scene && gameObject.scene.name == null)) continue;
+                                SerializedProperty serializedProperty = _allComponentsInScene[gameObject][component].Item1.FindProperty(tuple.Item1.Name);
                                 EditorGUI.BeginChangeCheck();
-                                EditorGUILayout.PropertyField(serializedProperty, new GUIContent(UtilitiesClass.FieldName(field.Name)));
+                                EditorGUILayout.PropertyField(serializedProperty, new GUIContent(UtilitiesClass.FieldName(tuple.Item1.Name)));
                                 if (EditorGUI.EndChangeCheck())
                                 {
-                                    _allComponents[gameObject][component].Item1.ApplyModifiedProperties();
+                                    _allComponentsInScene[gameObject][component].Item1.ApplyModifiedProperties();
                                 }
                             }
                             EditorGUI.indentLevel--;
@@ -144,7 +141,7 @@ public class SceneModificationsEditorWindow : EditorWindow
                 {
                     EditorGUI.indentLevel++;
                     using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("GameObject", node._go, typeof(GameObject), false);
-                    foreach (Component component in _allComponents[node._go].Keys.ToArray().OrderBy(x => x.name))
+                    foreach (Component component in _allComponentsInScene[node._go].Keys.ToArray().OrderBy(x => x.name))
                     {
                         EditorGUILayout.Space(2);
                         if (_foldoutComponent[component] = EditorGUILayout.Foldout(_foldoutComponent[component],
@@ -152,14 +149,16 @@ public class SceneModificationsEditorWindow : EditorWindow
                             true, UtilitiesClass.ToRichText("foldout")))
                         {
                             EditorGUI.indentLevel++;
-                            foreach (FieldInfo field in _allComponents[node._go][component].Item2)
+                            foreach (Tuple<FieldInfo, SceneModificationAttribute> tuple in _allComponentsInScene[node._go][component].Item2)
                             {
-                                SerializedProperty serializedProperty = _allComponents[node._go][component].Item1.FindProperty(field.Name);
+                                if ((tuple.Item2._objectLocation == ObjectLocation.Project && node._go.scene.name != null) ||
+                                    (tuple.Item2._objectLocation == ObjectLocation.Scene && node._go.scene.name == null)) continue;
+                                SerializedProperty serializedProperty = _allComponentsInScene[node._go][component].Item1.FindProperty(tuple.Item1.Name);
                                 EditorGUI.BeginChangeCheck();
-                                EditorGUILayout.PropertyField(serializedProperty, new GUIContent(UtilitiesClass.FieldName(field.Name)));
+                                EditorGUILayout.PropertyField(serializedProperty, new GUIContent(UtilitiesClass.FieldName(tuple.Item1.Name)));
                                 if (EditorGUI.EndChangeCheck())
                                 {
-                                    _allComponents[node._go][component].Item1.ApplyModifiedProperties();
+                                    _allComponentsInScene[node._go][component].Item1.ApplyModifiedProperties();
                                 }
                             }
                             EditorGUI.indentLevel--;
@@ -209,19 +208,12 @@ public class SceneModificationsEditorWindow : EditorWindow
     
     private void InitDictionary()
     {
-        _allComponents.Clear();
+        _allComponentsInScene.Clear();
         _foldoutComponent.Clear();
         _foldoutGameObject.Clear();
         List<Component> allComponents = new();
         foreach (Type type in _allTypes)
         {
-            //foreach (GameObject gameObject in Resources.LoadAll<GameObject>(""))
-            //{
-            //    foreach (Component component in gameObject.GetComponents(type))
-            //    {
-            //        allComponents.Add(component);
-            //    }
-            //}
             foreach (Component component in FindObjectsOfType(type))
             {
                 allComponents.Add(component);
@@ -234,44 +226,33 @@ public class SceneModificationsEditorWindow : EditorWindow
                     allComponents.Add(component);
                 }
             }
-            //search_results = System.IO.Directory.GetFiles($"Assets/{_path}", "*.prefab", System.IO.SearchOption.AllDirectories);
-            //for (int i = 0; i < search_results.Length; i++)
-            //{
-            //    foreach (Component component in ((GameObject)AssetDatabase.LoadAssetAtPath(search_results[i], typeof(GameObject))).GetComponents(type))
-            //    {
-            //        allComponents.Add(component);
-            //    }
-            //}
             foreach (Component component in allComponents)
             {
-                List<FieldInfo> allFields = new();
+                List<Tuple<FieldInfo, SceneModificationAttribute>> allFieldsInScene = new();
                 foreach (MemberInfo member in component.GetType().GetMembers(UtilitiesClass.FLAGS_FIELDS))
                 {
                     if (member.CustomAttributes.ToArray().Length > 0)
                     {
                         SceneModificationAttribute attribute = member.GetCustomAttribute<SceneModificationAttribute>();
-
                         if (attribute != null)
                         {
-                            if ((attribute._objectLocation != _location || attribute._objectLocation == ObjectLocation.All) 
-                                && (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property))
+                            if (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property)
                             {
-                                allFields.Add((FieldInfo)member);
+                                allFieldsInScene.Add(Tuple.Create((FieldInfo)member, attribute));
                             }
                         }
                     }
                 }
-                if (allFields.Count == 0)
+                if (allFieldsInScene.Count > 0)
                 {
-                    continue;
+                    if (!_allComponentsInScene.ContainsKey(component.gameObject))
+                    {
+                        _allComponentsInScene.Add(component.gameObject, new());
+                        _foldoutGameObject.Add(component.gameObject, false);
+                    }
+                    _allComponentsInScene[component.gameObject].Add(component, Tuple.Create(new SerializedObject(component), allFieldsInScene));
+                    _foldoutComponent.Add(component, false);
                 }
-                if (!_allComponents.ContainsKey(component.gameObject))
-                {
-                    _allComponents.Add(component.gameObject, new());
-                    _foldoutGameObject.Add(component.gameObject, false);
-                }
-                _allComponents[component.gameObject].Add(component, Tuple.Create(new SerializedObject(component), allFields));
-                _foldoutComponent.Add(component, false);
             }
         }
     }
@@ -279,7 +260,7 @@ public class SceneModificationsEditorWindow : EditorWindow
     private void InitHierarchyTree()
     {
         _allNodes.Clear();
-        foreach (GameObject go in _allComponents.Keys.ToArray())
+        foreach (GameObject go in _allComponentsInScene.Keys.ToArray())
         {
             _allNodes.Add(new Node(go, true, new()));
         }
@@ -288,7 +269,7 @@ public class SceneModificationsEditorWindow : EditorWindow
             Transform tempParent = _allNodes[i]._go.transform.parent;
             while (tempParent != null && _allNodes[i]._isOriginal)
             {
-                if (_allComponents.Keys.ToList().Contains(tempParent.gameObject))
+                if (_allComponentsInScene.Keys.ToList().Contains(tempParent.gameObject))
                 {
                     _allNodes[i]._isOriginal = false;
                     _allNodes.Find(x=>x._go == tempParent.gameObject)._allChilds.Add(_allNodes[i]);
@@ -315,18 +296,18 @@ public class SceneModificationsEditorWindow : EditorWindow
 
     private void RemoveNullKeysDictionary()
     {
-        foreach (GameObject gameObject in _allComponents.Keys.ToArray())
+        foreach (GameObject gameObject in _allComponentsInScene.Keys.ToArray())
         {
             if (gameObject == null)
             {
-                _allComponents.Remove(gameObject);
+                _allComponentsInScene.Remove(gameObject);
                 _foldoutGameObject.Remove(gameObject);
             }
-            foreach (Component component in _allComponents[gameObject].Keys.ToArray())
+            foreach (Component component in _allComponentsInScene[gameObject].Keys.ToArray())
             {
                 if (component == null)
                 {
-                    _allComponents[gameObject].Remove(component);
+                    _allComponentsInScene[gameObject].Remove(component);
                     _foldoutComponent.Remove(component);
                 }
             }
@@ -339,10 +320,10 @@ public class SceneModificationsEditorWindow : EditorWindow
         {
             foreach (Component component in FindObjectsOfType(type))
             {
-                if ((_allComponents.ContainsKey(component.gameObject) ? !_allComponents[component.gameObject].ContainsKey(component) : false) ||
-                    !_allComponents.ContainsKey(component.gameObject))
+                if ((_allComponentsInScene.ContainsKey(component.gameObject) ? !_allComponentsInScene[component.gameObject].ContainsKey(component) : false) ||
+                    !_allComponentsInScene.ContainsKey(component.gameObject))
                 {
-                    List<FieldInfo> allFields = new();
+                    List<Tuple<FieldInfo,SceneModificationAttribute>> allFields = new();
                     foreach (MemberInfo member in component.GetType().GetMembers(UtilitiesClass.FLAGS_FIELDS))
                     {
                         if (member.CustomAttributes.ToArray().Length > 0)
@@ -352,17 +333,17 @@ public class SceneModificationsEditorWindow : EditorWindow
                             {
                                 if (member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property)
                                 {
-                                    allFields.Add((FieldInfo)member);
+                                    allFields.Add(Tuple.Create((FieldInfo)member, attribute));
                                 }
                             }
                         }
                     }
-                    if (!_allComponents.ContainsKey(component.gameObject))
+                    if (!_allComponentsInScene.ContainsKey(component.gameObject))
                     {
-                        _allComponents.Add(component.gameObject, new());
+                        _allComponentsInScene.Add(component.gameObject, new());
                         _foldoutGameObject.Add(component.gameObject, false);
                     }
-                    _allComponents[component.gameObject].Add(component, Tuple.Create(new SerializedObject(component), allFields));
+                    _allComponentsInScene[component.gameObject].Add(component, Tuple.Create(new SerializedObject(component), allFields));
                     _foldoutComponent.Add(component, false);
                 }
             }
@@ -393,21 +374,21 @@ public class SceneModificationsEditorWindow : EditorWindow
             {
                 EditorGUI.indentLevel++;
                 using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("GameObject", node._go, typeof(GameObject), false);
-                foreach (Component component in _allComponents[node._go].Keys.ToArray().OrderBy(x => x.name))
+                foreach (Component component in _allComponentsInScene[node._go].Keys.ToArray().OrderBy(x => x.name))
                 {
                     EditorGUILayout.Space(2);
                     if (_foldoutComponent[component] = EditorGUILayout.Foldout(_foldoutComponent[component], UtilitiesClass.DisplayTextWithColours("[COMPONENT] ",
                         _colorComponentLabel) + component.GetType().ToString(), false, UtilitiesClass.ToRichText("foldout")))
                     {
                         EditorGUI.indentLevel++;
-                        foreach (FieldInfo field in _allComponents[node._go][component].Item2)
+                        foreach (Tuple<FieldInfo,SceneModificationAttribute> tuple in _allComponentsInScene[node._go][component].Item2)
                         {
-                            SerializedProperty serializedProperty = _allComponents[node._go][component].Item1.FindProperty(field.Name);
+                            SerializedProperty serializedProperty = _allComponentsInScene[node._go][component].Item1.FindProperty(tuple.Item1.Name);
                             EditorGUI.BeginChangeCheck();
-                            EditorGUILayout.PropertyField(serializedProperty, new GUIContent(UtilitiesClass.FieldName(field.Name)));
+                            EditorGUILayout.PropertyField(serializedProperty, new GUIContent(UtilitiesClass.FieldName(tuple.Item1.Name)));
                             if (EditorGUI.EndChangeCheck())
                             {
-                                _allComponents[node._go][component].Item1.ApplyModifiedProperties();
+                                _allComponentsInScene[node._go][component].Item1.ApplyModifiedProperties();
                             }
                         }
                         EditorGUI.indentLevel--;
