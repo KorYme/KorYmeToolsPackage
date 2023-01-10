@@ -286,6 +286,7 @@ public class SceneModificationsEditorWindow : EditorWindow
         CheckDictionnary();
         InitHierarchyTree();
         _scrollPos = Vector2.zero;
+
     }
 
     private void CheckDictionnary()
