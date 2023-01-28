@@ -8,9 +8,9 @@ namespace ToolLibrary
 {
     public enum ObjectLocation
     {
-        Scene,
-        Project,
-        Both,
+        Scene = 1,
+        Project = 2,
+        Both = 4,
     }
 
     [AttributeUsage(AttributeTargets.Field)]
