@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ToolLibrary
+namespace KorYmeLibrary.Attributes
 {
     public class ForceInterfaceAttribute : PropertyAttribute
     {
