@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ToolLibrary
+namespace KorYmeLibrary.Attributes
 {
     /// <summary>
     /// Has to be a serialized field
