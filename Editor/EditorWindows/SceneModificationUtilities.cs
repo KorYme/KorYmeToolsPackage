@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace KorYmeLibrary
+namespace KorYmeLibrary.SceneModification
 {
     /// <summary>
     /// Stands for KorYme's Tool Library Class
     /// </summary>
-    public sealed class UtilitiesClass
+    public sealed class SceneModificationUtilities
     {
         #region CONSTANTS
         public const BindingFlags FLAGS_FIELDS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
