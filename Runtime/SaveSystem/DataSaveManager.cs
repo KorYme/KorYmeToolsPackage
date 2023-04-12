@@ -66,5 +66,10 @@ namespace KorYmeLibrary.SaveSystem
             _fileDataHandler.Save(_gameData);
         }
 
+        [Button(nameof(DestroyOldData))]
+        public void DestroyOldData()
+        {
+            FileDataHandler.DestroyOldData();
+        }
     }
 }
