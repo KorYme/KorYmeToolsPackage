@@ -1,12 +1,15 @@
 using System;
 using UnityEngine;
 
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-public class ButtonAttribute : PropertyAttribute
+
+namespace KorYmeLibrary.Attributes
 {
-    public string MethodName { get; }
-    public ButtonAttribute(string methodName)
+    public class ButtonAttribute : MethodAttribute
     {
-        MethodName = methodName;
+        public string MethodName { get; }
+        public ButtonAttribute(string methodName)
+        {
+            MethodName = methodName;
+        }
     }
 }
