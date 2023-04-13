@@ -1,0 +1,18 @@
+{
+    "name": "koryme.toolpackage.wip.editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a99cf6a0824162044bf3dc28fd07b12d"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
