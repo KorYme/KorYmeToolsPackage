@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEditor;
+using KorYmeLibrary.Attributes;
 
 [CustomPropertyDrawer(typeof(RandomizeAttribute))]
-public class RandomizeAtributeDrawer : PropertyDrawer
+public class RandomizeAttributeDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {

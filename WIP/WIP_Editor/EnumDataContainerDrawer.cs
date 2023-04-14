@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using KorYmeLibrary.PasEncoreNommé;
 
 [CustomPropertyDrawer(typeof(EnumDataContainer<,>))]
 public class EnumDataContainerDrawer : PropertyDrawer

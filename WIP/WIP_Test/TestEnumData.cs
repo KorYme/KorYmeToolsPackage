@@ -1,10 +1,9 @@
+using KorYmeLibrary.Attributes;
+using KorYmeLibrary.PasEncoreNommé;
 using UnityEngine;
 
 public class TestEnumData : MonoBehaviour
 {
-    //[ForceInterface(typeof(IWeapon))]
-    //public Object weapon;
-
     public enum TEXTSTYLES
     {
         MEDIUM,
@@ -15,8 +14,14 @@ public class TestEnumData : MonoBehaviour
         SO_HUGE,
     }
 
-    //[EnumData(typeof(TEXTSTYLES))]
-    //public TextData[] _textData;
+    [ForceInterface(typeof(IWeapon))]
+    public Object weapon;
+
+    [EnumData(typeof(TEXTSTYLES))]
+    public TextData[] _textData;
+
+    [SerializeField]
+    EnumDataContainer<int, TEXTSTYLES> _container;
 }
 
 [System.Serializable]

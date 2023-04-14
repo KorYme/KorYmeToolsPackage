@@ -2,7 +2,8 @@
     "name": "koryme.toolpackage.wip.test",
     "rootNamespace": "",
     "references": [
-        "GUID:0e64712d151f879449bd14bac8a06feb"
+        "GUID:0e64712d151f879449bd14bac8a06feb",
+        "GUID:a99cf6a0824162044bf3dc28fd07b12d"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

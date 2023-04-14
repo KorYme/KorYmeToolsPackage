@@ -2,7 +2,8 @@
     "name": "koryme.toolpackage.wip.editor",
     "rootNamespace": "",
     "references": [
-        "GUID:a99cf6a0824162044bf3dc28fd07b12d"
+        "GUID:a99cf6a0824162044bf3dc28fd07b12d",
+        "GUID:3f4d89f04a04fd94c8d8266c0b8f30b9"
     ],
     "includePlatforms": [
         "Editor"
