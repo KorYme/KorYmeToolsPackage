@@ -1,31 +1,33 @@
 using UnityEngine;
 using UnityEditor;
-using KorYmeLibrary.Attributes;
 
-[CustomPropertyDrawer(typeof(RandomizeAttribute))]
-public class RandomizeAttributeDrawer : PropertyDrawer
+namespace KorYmeLibrary.Attributes
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    [CustomPropertyDrawer(typeof(RandomizeAttribute))]
+    public class RandomizeAttributeDrawer : PropertyDrawer
     {
-        if (property.propertyType != SerializedPropertyType.Float)
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.LabelField(position, "Use Test attribute with float");
-            return;
+            if (property.propertyType != SerializedPropertyType.Float)
+            {
+                EditorGUI.LabelField(position, "Use Test attribute with float");
+                return;
+            }
+            EditorGUI.BeginProperty(position, label, property);
+            Rect labelPosition = new Rect(position.x, position.y, position.width, 16f);
+            Rect buttonPosition = new Rect(position.x, position.y + labelPosition.height, position.width, 16f);
+            EditorGUI.LabelField(labelPosition, label, new GUIContent(property.floatValue.ToString()));
+            if (GUI.Button(buttonPosition, "Randomize"))
+            {
+                RandomizeAttribute target = (RandomizeAttribute)attribute;
+                property.floatValue = Random.Range(target.minValue, target.maxValue);
+            }
+            EditorGUI.EndProperty();
         }
-        EditorGUI.BeginProperty(position, label, property);
-        Rect labelPosition = new Rect(position.x, position.y, position.width, 16f);
-        Rect buttonPosition = new Rect(position.x, position.y + labelPosition.height, position.width, 16f);
-        EditorGUI.LabelField(labelPosition, label, new GUIContent(property.floatValue.ToString()));
-        if (GUI.Button(buttonPosition, "Randomize"))
-        {
-            RandomizeAttribute target = (RandomizeAttribute)attribute;
-            property.floatValue = Random.Range(target.minValue, target.maxValue);
-        }
-        EditorGUI.EndProperty();
-    }
 
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-    {
-        return 32f;
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return 32f;
+        }
     }
 }
