@@ -42,36 +42,3 @@ public class CodeGenerator : MonoBehaviour
     //    GenerateClass();
     //}
 }
-
-public class MenuManager : MonoBehaviour
-{
-    public GameObject menu; // Ton gameObject de menu
-
-    public void DisplayMenu() 
-    {
-        menu.SetActive(true);
-        Time.timeScale = 0f;
-    }
-
-    public void RemoveMenu() // Il faudra que tu glisses ton object avec ce script dans l'event de ton bouton "fermer le menu" et que tu appelles cette fonction dedans
-        // si tu sais pas comment faire je t'invite à regarder un tuto
-    {
-        menu.SetActive(false);
-        Time.timeScale = 1f;
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (Time.timeScale == 1f)
-            {
-                DisplayMenu();
-            }
-            else
-            {
-                RemoveMenu();
-            }
-        }
-    }
-}
