@@ -6,8 +6,8 @@ namespace KorYmeLibrary.SaveSystem
 {
     public interface IDataSave
     {
-        void LoadData(GameData gameData);
+        void LoadData(GameDataSample gameData);
 
-        void SaveData(ref GameData gameData);
+        void SaveData(ref GameDataSample gameData);
     }
 }

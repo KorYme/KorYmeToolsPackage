@@ -18,7 +18,7 @@ namespace KorYmeLibrary.SaveSystem
             this._encryptionType = encryptionType;
         }
 
-        public GameData Load()
+        public GameDataSample Load()
         {
             string fullPath = Path.Combine(_dataDirPath, _dataFileName);
             if (!File.Exists(fullPath)) return null;
@@ -32,7 +32,7 @@ namespace KorYmeLibrary.SaveSystem
                         dataToLoad = Encrypt(reader.ReadToEnd(), _encryptionType, false);
                     }
                 }
-                return JsonUtility.FromJson<GameData>(dataToLoad);
+                return JsonUtility.FromJson<GameDataSample>(dataToLoad);
             }
             catch (Exception e)
             {
@@ -41,7 +41,7 @@ namespace KorYmeLibrary.SaveSystem
             }
         }
 
-        public void Save(GameData data)
+        public void Save(GameDataSample data)
         {
             string fullPath = Path.Combine(_dataDirPath, _dataFileName);
             try

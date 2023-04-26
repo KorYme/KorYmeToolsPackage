@@ -22,15 +22,15 @@ public class TestSave : MonoBehaviour, IDataSave
         }
     }
 
-    public void LoadData(GameData gameData)
+    public void LoadData(GameDataSample gameData)
     {
-        this._deathCount = gameData._deathCount;
-        this._position = gameData._position;
+        //this._deathCount = gameData._deathCount;
+        //this._position = gameData._position;
     }
 
-    public void SaveData(ref GameData gameData)
+    public void SaveData(ref GameDataSample gameData)
     {
-        gameData._deathCount = this._deathCount;
-        gameData._position = this._position;
+        //gameData._deathCount = this._deathCount;
+        //gameData._position = this._position;
     }
 }

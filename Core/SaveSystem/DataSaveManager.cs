@@ -9,7 +9,7 @@ namespace KorYmeLibrary.SaveSystem
     {
         public static DataSaveManager Instance { get; private set; }
 
-        private GameData _gameData = null;
+        private GameDataSample _gameData = null;
         private List<IDataSave> _allSaveData;
         private FileDataHandler _fileDataHandler;
 
@@ -47,7 +47,7 @@ namespace KorYmeLibrary.SaveSystem
 
         public void NewGame()
         {
-            _gameData = new GameData();
+            _gameData = new GameDataSample();
         }
 
         public void LoadGame()
