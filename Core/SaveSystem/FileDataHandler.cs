@@ -8,10 +8,9 @@ namespace KorYmeLibrary.SaveSystem
     {
         private string _dataDirPath = "";
         private string _dataFileName = "";
-        private EncryptionType _encryptionType = EncryptionType.None;
-        private readonly string encryptionString = "hey";
+        private EncryptionUtilities.EncryptionType _encryptionType = EncryptionUtilities.EncryptionType.None;
 
-        public FileDataHandler(string dataDirPath, string dataFileName, EncryptionType encryptionType)
+        public FileDataHandler(string dataDirPath, string dataFileName, EncryptionUtilities.EncryptionType encryptionType)
         {
             this._dataDirPath = dataDirPath;
             this._dataFileName = dataFileName;
@@ -29,7 +28,7 @@ namespace KorYmeLibrary.SaveSystem
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
-                        dataToLoad = Encrypt(reader.ReadToEnd(), _encryptionType, false);
+                        dataToLoad = EncryptionUtilities.Encrypt(reader.ReadToEnd(), _encryptionType, false);
                     }
                 }
                 return JsonUtility.FromJson<T>(dataToLoad);
@@ -47,7 +46,7 @@ namespace KorYmeLibrary.SaveSystem
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-                string dataToStore = Encrypt(JsonUtility.ToJson(data, true), _encryptionType, true);
+                string dataToStore = EncryptionUtilities.Encrypt(JsonUtility.ToJson(data, true), _encryptionType, true);
                 using (FileStream stream = new FileStream(fullPath, FileMode.Create))
                 {
                     using (StreamWriter writer = new StreamWriter(stream))
@@ -60,38 +59,6 @@ namespace KorYmeLibrary.SaveSystem
             {
                 Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
             }
-        }
-
-
-
-        //A mettre dans la class Utility ou dans une nouvelle classe
-        public enum EncryptionType
-        {
-            None,
-            XOR,
-        }
-
-        private string Encrypt(string data, EncryptionType encryptionType, bool isEncrypting)
-        {
-            switch (encryptionType)
-            {
-                case EncryptionType.None:
-                    return data;
-                case EncryptionType.XOR:
-                    return XOREncrypting(data);
-                default:
-                    return "";
-            }
-        }
-
-        private string XOREncrypting(string data)
-        {
-            string modifiedData = "";
-            for (int i = 0; i < data.Length; i++)
-            {
-                modifiedData += (char)(data[i] ^ encryptionString[i % encryptionString.Length]);
-            }
-            return modifiedData;
         }
 
         public static void DestroyOldData()
