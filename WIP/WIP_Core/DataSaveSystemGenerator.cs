@@ -33,10 +33,15 @@ namespace KorYmeLibrary.SaveSystem
             // Écriture du code généré dans un fichier
             string path = folderPath + "/" + systemClassName + ".cs";
             string classCode =
+                "using System.Collections;" + "\n" +
+                "using System.Collections.Generic;" + "\n" +
+                "using UnityEngine;" + "\n" +
+                "\n" +
                 "namespace KorYmeLibrary.SaveSystem " + "\n" +
                 "{" + "\n" +
                 "   public class " + systemClassName + " : DataSaveManager<" + _dataClassName + ">" + "\n" +
                 "   {" + "\n" +
+                "       // Modify if you're willing to add some behaviour to the component" + "\n" +
                 "   }" + "\n" +
                 "\n" +
                 "   [System.Serializable]" + "\n" +

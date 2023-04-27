@@ -14,11 +14,11 @@ namespace KorYmeLibrary.SaveSystem
         private FileDataHandler<T> _fileDataHandler;
 
         [Header("File Storage Config")]
-        [SerializeField] string _fileName;
+        [SerializeField] protected string _fileName;
         [SerializeField] FileDataHandler<T>.EncryptionType _encryptionType;
 
         [Header("InGame parameters")]
-        [SerializeField] bool _saveOnQuit = false;
+        [SerializeField] protected bool _saveOnQuit;
 
         private void Awake()
         {
@@ -31,6 +31,13 @@ namespace KorYmeLibrary.SaveSystem
             _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSave<T>>().ToList();
             _fileDataHandler = new FileDataHandler<T>(Application.persistentDataPath, _fileName, _encryptionType);
         }
+
+        private void Reset()
+        {
+            _fileName = "data.json";
+            _saveOnQuit = true;
+        }
+
         private void OnApplicationQuit()
         {
             if (_saveOnQuit)

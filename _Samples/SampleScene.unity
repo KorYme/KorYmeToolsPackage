@@ -311,7 +311,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2080381065}
   - component: {fileID: 2080381066}
-  - component: {fileID: 2080381067}
   m_Layer: 0
   m_Name: ---DataManager---
   m_TagString: Untagged
@@ -347,18 +346,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dataClassName: NewGameData
---- !u!114 &2080381067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2080381064}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5a62f50dd9e8b24085f6c1fafbd3b4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _fileName: 
-  _encryptionType: 0
-  _saveOnQuit: 0
