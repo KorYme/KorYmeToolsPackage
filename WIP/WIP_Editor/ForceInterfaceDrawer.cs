@@ -4,7 +4,7 @@ using UnityEditor;
 namespace KorYmeLibrary.Attributes
 {
     [CustomPropertyDrawer(typeof(ForceInterfaceAttribute))]
-    public class ForceInterfaceAttributeDrawer : PropertyDrawer
+    public class ForceInterfaceDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

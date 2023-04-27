@@ -4,7 +4,7 @@ using UnityEngine;
 namespace KorYmeLibrary.Attributes
 {
     [CustomPropertyDrawer(typeof(ShowIfAttribute))]
-    public class ShowIfPropertyDrawer : PropertyDrawer
+    public class ShowIfDrawer : PropertyDrawer
     {
         private ShowIfAttribute drawIfAttribute;
         SerializedProperty comparedField;

@@ -1,0 +1,113 @@
+using System;
+using System.IO;
+using UnityEngine;
+
+namespace KorYmeLibrary.SaveSystem
+{
+    public class FileDataHandler<T>
+    {
+        private string _dataDirPath = "";
+        private string _dataFileName = "";
+        private EncryptionType _encryptionType = EncryptionType.None;
+        private readonly string encryptionString = "hey";
+
+        public FileDataHandler(string dataDirPath, string dataFileName, EncryptionType encryptionType)
+        {
+            this._dataDirPath = dataDirPath;
+            this._dataFileName = dataFileName;
+            this._encryptionType = encryptionType;
+        }
+
+        public T Load()
+        {
+            string fullPath = Path.Combine(_dataDirPath, _dataFileName);
+            if (!File.Exists(fullPath)) return default(T);
+            try
+            {
+                string dataToLoad = "";
+                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        dataToLoad = Encrypt(reader.ReadToEnd(), _encryptionType, false);
+                    }
+                }
+                return JsonUtility.FromJson<T>(dataToLoad);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("Error occured when trying to save data to file: " + fullPath + "\n" + e);
+                return default(T);
+            }
+        }
+
+        public void Save(T data)
+        {
+            string fullPath = Path.Combine(_dataDirPath, _dataFileName);
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+                string dataToStore = Encrypt(JsonUtility.ToJson(data, true), _encryptionType, true);
+                using (FileStream stream = new FileStream(fullPath, FileMode.Create))
+                {
+                    using (StreamWriter writer = new StreamWriter(stream))
+                    {
+                        writer.Write(dataToStore);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
+            }
+        }
+
+
+
+        //A mettre dans la class Utility ou dans une nouvelle classe
+        public enum EncryptionType
+        {
+            None,
+            XOR,
+        }
+
+        private string Encrypt(string data, EncryptionType encryptionType, bool isEncrypting)
+        {
+            switch (encryptionType)
+            {
+                case EncryptionType.None:
+                    return data;
+                case EncryptionType.XOR:
+                    return XOREncrypting(data);
+                default:
+                    return "";
+            }
+        }
+
+        private string XOREncrypting(string data)
+        {
+            string modifiedData = "";
+            for (int i = 0; i < data.Length; i++)
+            {
+                modifiedData += (char)(data[i] ^ encryptionString[i % encryptionString.Length]);
+            }
+            return modifiedData;
+        }
+
+        public static void DestroyOldData()
+        {
+            DirectoryInfo di = new DirectoryInfo(Application.persistentDataPath);
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                Debug.Log("This file has been deleted  : \n" + file.Name);
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                Debug.Log("This directory has been deleted  : \n" + dir.Name);
+                dir.Delete(true);
+            }
+        }
+    }
+}
