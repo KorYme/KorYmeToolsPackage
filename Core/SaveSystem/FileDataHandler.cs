@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KorYmeLibrary.SaveSystem
 {
-    public class FileDataHandler
+    public class FileDataHandler<T>
     {
         private string _dataDirPath = "";
         private string _dataFileName = "";
@@ -18,10 +18,10 @@ namespace KorYmeLibrary.SaveSystem
             this._encryptionType = encryptionType;
         }
 
-        public GameDataSample Load()
+        public T Load()
         {
             string fullPath = Path.Combine(_dataDirPath, _dataFileName);
-            if (!File.Exists(fullPath)) return null;
+            if (!File.Exists(fullPath)) return default(T);
             try
             {
                 string dataToLoad = "";
@@ -32,16 +32,16 @@ namespace KorYmeLibrary.SaveSystem
                         dataToLoad = Encrypt(reader.ReadToEnd(), _encryptionType, false);
                     }
                 }
-                return JsonUtility.FromJson<GameDataSample>(dataToLoad);
+                return JsonUtility.FromJson<T>(dataToLoad);
             }
             catch (Exception e)
             {
                 Debug.LogWarning("Error occured when trying to save data to file: " + fullPath + "\n" + e);
-                return null;
+                return default(T);
             }
         }
 
-        public void Save(GameDataSample data)
+        public void Save(T data)
         {
             string fullPath = Path.Combine(_dataDirPath, _dataFileName);
             try

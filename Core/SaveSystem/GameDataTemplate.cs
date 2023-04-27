@@ -1,9 +1,9 @@
 namespace KorYmeLibrary.SaveSystem
 {
     [System.Serializable]
-    public class GameDataSample
+    public class GameDataTemplate
     {
-        public GameDataSample()
+        public GameDataTemplate()
         {
         }
     }

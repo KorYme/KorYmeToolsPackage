@@ -5,17 +5,17 @@ using KorYmeLibrary.Attributes;
 
 namespace KorYmeLibrary.SaveSystem
 {
-    public class DataSaveManager : MonoBehaviour
+    public class DataSaveManager<T> : MonoBehaviour where T : GameDataTemplate, new()
     {
-        public static DataSaveManager Instance { get; private set; }
+        public static DataSaveManager<T> Instance { get; private set; }
 
-        private GameDataSample _gameData = null;
-        private List<IDataSave> _allSaveData;
-        private FileDataHandler _fileDataHandler;
+        private T _gameData = null;
+        private List<IDataSave<T>> _allSaveData;
+        private FileDataHandler<T> _fileDataHandler;
 
         [Header("File Storage Config")]
         [SerializeField] string _fileName;
-        [SerializeField] FileDataHandler.EncryptionType _encryptionType;
+        [SerializeField] FileDataHandler<T>.EncryptionType _encryptionType;
 
         [Header("InGame parameters")]
         [SerializeField] bool _saveOnQuit = false;
@@ -24,12 +24,12 @@ namespace KorYmeLibrary.SaveSystem
         {
             if (Instance != null)
             {
-                Debug.LogError("There is more than one DataSaveManager in the scene");
+                Debug.LogError("There is more than one DataSaveManager of this type in the scene");
                 return;
             }
             Instance = this;
-            _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSave>().ToList();
-            _fileDataHandler = new FileDataHandler(Application.persistentDataPath, _fileName, _encryptionType);
+            _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSave<T>>().ToList();
+            _fileDataHandler = new FileDataHandler<T>(Application.persistentDataPath, _fileName, _encryptionType);
         }
         private void OnApplicationQuit()
         {
@@ -47,7 +47,7 @@ namespace KorYmeLibrary.SaveSystem
 
         public void NewGame()
         {
-            _gameData = new GameDataSample();
+            _gameData = new T();
         }
 
         public void LoadGame()
@@ -70,7 +70,7 @@ namespace KorYmeLibrary.SaveSystem
         [Button]
         public void DestroyOldData()
         {
-            FileDataHandler.DestroyOldData();
+            FileDataHandler<T>.DestroyOldData();
         }
     }
 }
