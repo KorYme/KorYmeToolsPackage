@@ -15,8 +15,6 @@ namespace KorYmeLibrary
         {
             if (methodInfo.GetParameters().All(p => p.IsOptional))
             {
-                ButtonAttribute buttonAttribute = (ButtonAttribute)methodInfo.GetCustomAttributes(typeof(ButtonAttribute), true)[0];
-
                 if (GUILayout.Button(ObjectNames.NicifyVariableName(methodInfo.Name)))
                 {
                     object[] defaultParams = methodInfo.GetParameters().Select(p => p.DefaultValue).ToArray();
@@ -49,7 +47,7 @@ namespace KorYmeLibrary
             }
             else
             {
-                string warning = typeof(ButtonAttribute).Name + " works only on methods with no parameters";
+                string warning = methodInfo.Name + " works only on methods with no parameters";
             }
         }
     }

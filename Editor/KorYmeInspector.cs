@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 using KorYmeLibrary.Attributes;
 
 namespace KorYmeLibrary
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(UnityEngine.Object), true)]
-    public class KorYmeInspector : Editor
+    [CustomEditor(typeof(MonoBehaviour), true)]
+    public class KorYmeInspector : UnityEditor.Editor
     {
         IEnumerable<MethodInfo> _allMethods;
 
@@ -24,7 +25,6 @@ namespace KorYmeLibrary
 
         protected void DrawButtons()
         {
-            UnityEngine.Debug.Log("Hey");
             foreach (MethodInfo method in _allMethods)
             {
                 KorYmeEditorGUI.Button(serializedObject.targetObject, method);

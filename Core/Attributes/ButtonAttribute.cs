@@ -5,10 +5,8 @@ namespace KorYmeLibrary.Attributes
 {
     public class ButtonAttribute : MethodAttribute
     {
-        public string MethodName { get; }
-        public ButtonAttribute(string methodName)
+        public ButtonAttribute()
         {
-            MethodName = methodName;
         }
     }
 }
