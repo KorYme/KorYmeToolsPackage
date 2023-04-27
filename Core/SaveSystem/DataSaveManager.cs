@@ -9,13 +9,13 @@ namespace KorYmeLibrary.SaveSystem
     {
         public static DataSaveManager<T> Instance { get; private set; }
 
-        private T _gameData = null;
-        private List<IDataSave<T>> _allSaveData;
-        private FileDataHandler<T> _fileDataHandler;
+        protected T _gameData = null;
+        protected List<IDataSave<T>> _allSaveData;
+        protected FileDataHandler<T> _fileDataHandler;
 
         [Header("File Storage Config")]
         [SerializeField] protected string _fileName;
-        [SerializeField] FileDataHandler<T>.EncryptionType _encryptionType;
+        [SerializeField] protected EncryptionUtilities.EncryptionType _encryptionType;
 
         [Header("InGame parameters")]
         [SerializeField] protected bool _saveOnQuit;
