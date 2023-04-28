@@ -9,46 +9,40 @@ namespace KorYmeLibrary.SaveSystem
 {
     public class DataSaveSystemGenerator : MonoBehaviour
     {
+        #region PARAMETERS
         [Header("Parameters")]
         [SerializeField, Tooltip("Name of the class which will countain all the data")] 
         string _dataClassName;
         [SerializeField, Tooltip("Path to the folder starting from the Assets/")]
         string _folderName;
+        #endregion
 
-        private void Reset()
+        #region PROPERTIES
+        string _folderPath
         {
-            _folderName = "SaveSystemClasses";
-            _dataClassName = "GameData";
+            get => Application.dataPath + "/" + _folderName;
         }
 
-        [Button]
-        public void GenerateGameDataClass()
+        string _systemClassName
         {
-            string folderPath = Application.dataPath + "/" + _folderName;
-            string systemClassName = "DSM_" + _dataClassName;
+            get => "DSM_" + _dataClassName;
+        }
 
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-                AssetDatabase.Refresh();
-            }
+        string _path
+        {
+            get => _folderPath + "/" + _systemClassName + ".cs";
+        }
 
-            if (File.Exists(folderPath + "/" + systemClassName + ".cs"))
-            {
-                Debug.LogWarning("There is already one class named this way in " + _folderName);
-                return;
-            }
-
-            // Écriture du code généré dans un fichier
-            string path = folderPath + "/" + systemClassName + ".cs";
-            string classCode =
+        string _classCode
+        {
+            get =>
                 "using System.Collections;" + "\n" +
                 "using System.Collections.Generic;" + "\n" +
                 "using UnityEngine;" + "\n" +
                 "\n" +
                 "namespace KorYmeLibrary.SaveSystem " + "\n" +
                 "{" + "\n" +
-                "   public class " + systemClassName + " : DataSaveManager<" + _dataClassName + ">" + "\n" +
+                "   public class " + _systemClassName + " : DataSaveManager<" + _dataClassName + ">" + "\n" +
                 "   {" + "\n" +
                 "       // Modify if you're willing to add some behaviour to the component" + "\n" +
                 "   }" + "\n" +
@@ -59,29 +53,63 @@ namespace KorYmeLibrary.SaveSystem
                 "       // Create the values you want to save here" + "\n" +
                 "   }" + "\n" +
                 "}";
+        }
+        #endregion
 
-            File.WriteAllText(path, classCode);
+        #region METHODS
+        private void Reset()
+        {
+            _folderName = "SaveSystemClasses";
+            _dataClassName = "GameData";
+        }
+
+        [Button]
+        void GenerateSaveSystemFolder()
+        {
+            if (Directory.Exists(_folderPath))
+            {
+                Debug.LogWarning("A folder named this way already exists in the project.");
+                return;
+            }
+            Directory.CreateDirectory(_folderPath);
+            AssetDatabase.Refresh();
+        }
+
+        [Button]
+        public void GenerateGameDataClass()
+        {
+            if (!Directory.Exists(_folderPath))
+            {
+                Debug.LogWarning("No folder named this way has been found in the project. \n" +
+                                    "Try creating one with the button above");
+                return;
+            }
+            if (File.Exists(_folderPath + "/" + _systemClassName + ".cs"))
+            {
+                Debug.LogWarning("There is already one class named this way in " + _folderName);
+                return;
+            }
+            // Écriture du code généré dans un fichier
+            File.WriteAllText(_path, _classCode);
             AssetDatabase.Refresh();
         }
 
         [Button]
         void AttachDataSaveManager()
         {
-            string folderPath = Application.dataPath + "/" + _folderName;
-            string systemClassName = "DSM_" + _dataClassName;
-            if (!Directory.Exists(folderPath))
+            if (!Directory.Exists(_folderPath))
             {
                 Debug.LogWarning("No folder SaveSystemClasses has been found");
                 return;
             }
-            if (!File.Exists(folderPath + "/" + systemClassName + ".cs"))
+            if (!File.Exists(_folderPath + "/" + _systemClassName + ".cs"))
             {
-                Debug.LogWarning("No game data class has been found in the folder : " + folderPath);
+                Debug.LogWarning("No game data class has been found in the folder : " + _folderPath);
                 return;
             }
             Type type = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(a => a.GetTypes())
-                                .FirstOrDefault(t => t.Name == systemClassName);
+                                .FirstOrDefault(t => t.Name == _systemClassName);
             if (type == null)
             {
                 Debug.LogWarning("No type has been found");
@@ -94,5 +122,6 @@ namespace KorYmeLibrary.SaveSystem
             }
             gameObject.AddComponent(type);
         }
+        #endregion
     }
 }
