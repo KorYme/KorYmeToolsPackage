@@ -9,8 +9,17 @@ namespace KorYmeLibrary.SaveSystem
 {
     public class DataSaveSystemGenerator : MonoBehaviour
     {
-        [SerializeField] string _dataClassName = "MyGameData";
-        string _folderName = "SaveSystemClasses";
+        [Header("Parameters")]
+        [SerializeField, Tooltip("Name of the class which will countain all the data")] 
+        string _dataClassName;
+        [SerializeField, Tooltip("Path to the folder starting from the Assets/")]
+        string _folderName;
+
+        private void Reset()
+        {
+            _folderName = "SaveSystemClasses";
+            _dataClassName = "GameData";
+        }
 
         [Button]
         public void GenerateGameDataClass()
