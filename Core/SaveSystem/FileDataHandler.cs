@@ -64,17 +64,21 @@ namespace KorYmeLibrary.SaveSystem
         public static void DestroyOldData()
         {
             DirectoryInfo di = new DirectoryInfo(Application.persistentDataPath);
-
+            int fileDestroyed = 0;
+            int directoryDestroyed = 0;
             foreach (FileInfo file in di.GetFiles())
             {
                 Debug.Log("This file has been deleted  : \n" + file.Name);
                 file.Delete();
+                fileDestroyed++;
             }
             foreach (DirectoryInfo dir in di.GetDirectories())
             {
                 Debug.Log("This directory has been deleted  : \n" + dir.Name);
                 dir.Delete(true);
+                directoryDestroyed++;
             }
+            Debug.Log("You have destroyed " + fileDestroyed.ToString() + " files and " + directoryDestroyed.ToString() + " directories.");
         }
     }
 }

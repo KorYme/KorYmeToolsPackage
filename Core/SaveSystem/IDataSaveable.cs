@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KorYmeLibrary.SaveSystem
 {
-    public interface IDataSave<T>
+    public interface IDataSaveable<T>
     {
         void LoadData(T gameData);
 

@@ -10,7 +10,7 @@ namespace KorYmeLibrary.SaveSystem
         public static DataSaveManager<T> Instance { get; private set; }
 
         protected T _gameData = null;
-        protected List<IDataSave<T>> _allSaveData;
+        protected List<IDataSaveable<T>> _allSaveData;
         protected FileDataHandler<T> _fileDataHandler;
 
         [Header("File Storage Config")]
@@ -28,7 +28,7 @@ namespace KorYmeLibrary.SaveSystem
                 return;
             }
             Instance = this;
-            _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSave<T>>().ToList();
+            _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSaveable<T>>().ToList();
             _fileDataHandler = new FileDataHandler<T>(Application.persistentDataPath, _fileName, _encryptionType);
         }
 

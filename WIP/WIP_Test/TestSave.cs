@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using KorYmeLibrary.SaveSystem;
 
-public class TestSave : MonoBehaviour, IDataSave<GameDataTemplate> 
+public class TestSave : MonoBehaviour, IDataSaveable<GameDataTemplate> 
 {
     private int _deathCount;
     private Vector3 _position;
