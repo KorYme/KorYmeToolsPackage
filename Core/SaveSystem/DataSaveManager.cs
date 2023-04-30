@@ -7,6 +7,7 @@ namespace KorYmeLibrary.SaveSystem
 {
     public class DataSaveManager<T> : MonoBehaviour where T : GameDataTemplate, new()
     {
+        #region FIELDS
         public static DataSaveManager<T> Instance { get; private set; }
 
         protected T _gameData = null;
@@ -19,7 +20,9 @@ namespace KorYmeLibrary.SaveSystem
 
         [Header("InGame parameters")]
         [SerializeField] protected bool _saveOnQuit;
+        #endregion
 
+        #region METHODS
         private void Awake()
         {
             if (Instance != null)
@@ -79,5 +82,6 @@ namespace KorYmeLibrary.SaveSystem
         {
             FileDataHandler<T>.DestroyOldData();
         }
+        #endregion
     }
 }

@@ -6,25 +6,36 @@ namespace KorYmeLibrary.SaveSystem
 {
     public class FileDataHandler<T>
     {
-        private string _dataDirPath = "";
-        private string _dataFileName = "";
-        private EncryptionUtilities.EncryptionType _encryptionType = EncryptionUtilities.EncryptionType.None;
+        #region FIELDS
+        private string _dataDirPath;
+        private string _dataFileName;
+        private EncryptionUtilities.EncryptionType _encryptionType;
+        #endregion
 
-        public FileDataHandler(string dataDirPath, string dataFileName, EncryptionUtilities.EncryptionType encryptionType)
+        #region PROPERTIES
+        string _fullPath
+        {
+            get => Path.Combine(_dataDirPath, _dataFileName);
+        }
+        #endregion
+
+        #region CONSTRUCTORS
+        public FileDataHandler(string dataDirPath = "", string dataFileName = "", EncryptionUtilities.EncryptionType encryptionType = EncryptionUtilities.EncryptionType.None)
         {
             this._dataDirPath = dataDirPath;
             this._dataFileName = dataFileName;
             this._encryptionType = encryptionType;
         }
+        #endregion
 
+        #region METHODS
         public T Load()
         {
-            string fullPath = Path.Combine(_dataDirPath, _dataFileName);
-            if (!File.Exists(fullPath)) return default(T);
+            if (!File.Exists(_fullPath)) return default(T);
             try
             {
-                string dataToLoad = "";
-                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                string dataToLoad;
+                using (FileStream stream = new FileStream(_fullPath, FileMode.Open))
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
@@ -35,29 +46,27 @@ namespace KorYmeLibrary.SaveSystem
             }
             catch (Exception e)
             {
-                Debug.LogWarning("Error occured when trying to save data to file: " + fullPath + "\n" + e);
+                Debug.LogWarning("Error occured when trying to save data to file: " + _fullPath + "\n" + e);
                 return default(T);
             }
         }
 
         public void Save(T data)
         {
-            string fullPath = Path.Combine(_dataDirPath, _dataFileName);
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-                string dataToStore = EncryptionUtilities.Encrypt(JsonUtility.ToJson(data, true), _encryptionType, true);
-                using (FileStream stream = new FileStream(fullPath, FileMode.Create))
+                Directory.CreateDirectory(Path.GetDirectoryName(_fullPath));
+                using (FileStream stream = new FileStream(_fullPath, FileMode.Create))
                 {
                     using (StreamWriter writer = new StreamWriter(stream))
                     {
-                        writer.Write(dataToStore);
+                        writer.Write(EncryptionUtilities.Encrypt(JsonUtility.ToJson(data, true), _encryptionType, true));
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
+                Debug.LogError("Error occured when trying to save data to file: " + _fullPath + "\n" + e);
             }
         }
 
@@ -80,5 +89,6 @@ namespace KorYmeLibrary.SaveSystem
             }
             Debug.Log("You have destroyed " + fileDestroyed.ToString() + " files and " + directoryDestroyed.ToString() + " directories.");
         }
+        #endregion
     }
 }

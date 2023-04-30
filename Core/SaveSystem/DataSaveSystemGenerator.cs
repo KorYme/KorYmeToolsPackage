@@ -9,7 +9,7 @@ namespace KorYmeLibrary.SaveSystem
 {
     public class DataSaveSystemGenerator : MonoBehaviour
     {
-        #region PARAMETERS
+        #region FIELDS
         [Header("Parameters")]
         [SerializeField, Tooltip("Name of the class which will countain all the data")] 
         string _dataClassName;
