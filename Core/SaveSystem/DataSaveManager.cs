@@ -7,10 +7,11 @@ namespace KorYmeLibrary.SaveSystem
 {
     public class DataSaveManager<T> : MonoBehaviour where T : GameDataTemplate, new()
     {
+        #region FIELDS
         public static DataSaveManager<T> Instance { get; private set; }
 
         protected T _gameData = null;
-        protected List<IDataSave<T>> _allSaveData;
+        protected List<IDataSaveable<T>> _allSaveData;
         protected FileDataHandler<T> _fileDataHandler;
 
         [Header("File Storage Config")]
@@ -19,7 +20,9 @@ namespace KorYmeLibrary.SaveSystem
 
         [Header("InGame parameters")]
         [SerializeField] protected bool _saveOnQuit;
+        #endregion
 
+        #region METHODS
         private void Awake()
         {
             if (Instance != null)
@@ -28,7 +31,7 @@ namespace KorYmeLibrary.SaveSystem
                 return;
             }
             Instance = this;
-            _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSave<T>>().ToList();
+            _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSaveable<T>>().ToList();
             _fileDataHandler = new FileDataHandler<T>(Application.persistentDataPath, _fileName, _encryptionType);
         }
 
@@ -79,5 +82,6 @@ namespace KorYmeLibrary.SaveSystem
         {
             FileDataHandler<T>.DestroyOldData();
         }
+        #endregion
     }
 }

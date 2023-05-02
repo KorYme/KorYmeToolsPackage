@@ -11,6 +11,7 @@ namespace KorYmeLibrary
 {
     public static class KorYmeEditorGUI
     {
+        #region METHODS
         public static void Button(UnityEngine.Object target, MethodInfo methodInfo)
         {
             if (methodInfo.GetParameters().All(p => p.IsOptional))
@@ -50,5 +51,6 @@ namespace KorYmeLibrary
                 string warning = methodInfo.Name + " works only on methods with no parameters";
             }
         }
+        #endregion
     }
 }

@@ -23,13 +23,13 @@ namespace KorYmeLibrary.Attributes
                 {
                     property.objectReferenceValue = null;
                 }
-                else if (target.interfaceType.IsAssignableFrom(obj.GetType()))
+                else if (target._interfaceType.IsAssignableFrom(obj.GetType()))
                 {
                     property.objectReferenceValue = obj;
                 }
                 else if (obj is GameObject go)
                 {
-                    MonoBehaviour component = (MonoBehaviour)go.GetComponent(target.interfaceType);
+                    MonoBehaviour component = (MonoBehaviour)go.GetComponent(target._interfaceType);
                     if (component != null)
                     {
                         property.objectReferenceValue = component;

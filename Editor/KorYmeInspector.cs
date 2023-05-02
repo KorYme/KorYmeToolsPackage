@@ -20,6 +20,7 @@ namespace KorYmeLibrary
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+            EditorGUILayout.Space(15f);
             DrawButtons();
         }
 

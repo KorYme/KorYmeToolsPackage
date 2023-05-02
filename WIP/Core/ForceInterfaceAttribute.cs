@@ -5,11 +5,15 @@ namespace KorYmeLibrary.Attributes
 {
     public class ForceInterfaceAttribute : PropertyAttribute
     {
-        public readonly Type interfaceType;
+        #region FIELDS
+        public readonly Type _interfaceType;
+        #endregion
 
+        #region CONSTRUCTORS
         public ForceInterfaceAttribute(Type interfaceType)
         {
-            this.interfaceType = interfaceType;
+            this._interfaceType = interfaceType;
         }
+        #endregion
     }
 }

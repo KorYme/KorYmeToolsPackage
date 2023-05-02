@@ -8,6 +8,7 @@ namespace KorYmeLibrary
 {
     public static class ReflectionUtility
     {
+        #region METHODS
         public static IEnumerable<MethodInfo> GetAllMethods(object target, Func<MethodInfo, bool> predicate)
         {
             if (target is null)
@@ -51,5 +52,6 @@ namespace KorYmeLibrary
 
             return types;
         }
+        #endregion
     }
 }
