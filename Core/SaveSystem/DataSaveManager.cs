@@ -79,8 +79,8 @@ namespace KorYmeLibrary.SaveSystem
             _fileDataHandler.Save(_gameData);
         }
 
-        [Button]
         #if UNITY_EDITOR
+        [Button]
         public void DestroyOldData()
         {
             FileDataHandler<T>.DestroyOldData();
