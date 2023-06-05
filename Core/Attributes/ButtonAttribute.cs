@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace KorYmeLibrary.Attributes
 {
-    public class ButtonAttribute : MethodAttribute
-    {
-        public ButtonAttribute()
-        {
-        }
-    }
+    //public class ButtonAttribute : MethodAttribute
+    //{
+    //    public ButtonAttribute()
+    //    {
+    //    }
+    //}
 }

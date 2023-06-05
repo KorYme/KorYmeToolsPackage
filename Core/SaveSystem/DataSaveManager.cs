@@ -2,6 +2,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using KorYmeLibrary.Attributes;
+using NaughtyAttributes;
 
 namespace KorYmeLibrary.SaveSystem
 {
