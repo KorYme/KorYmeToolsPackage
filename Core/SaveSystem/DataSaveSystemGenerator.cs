@@ -58,6 +58,7 @@ namespace KorYmeLibrary.SaveSystem
         #endregion
 
         #region METHODS
+        #if UNITY_EDITOR
         private void Reset()
         {
             _folderName = "SaveSystemClasses";
@@ -123,6 +124,7 @@ namespace KorYmeLibrary.SaveSystem
             }
             gameObject.AddComponent(type);
         }
+        #endif
         #endregion
     }
 }
