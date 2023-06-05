@@ -10,6 +10,7 @@ namespace KorYmeLibrary.SaveSystem
         private string _dataDirPath;
         private string _dataFileName;
         private EncryptionUtilities.EncryptionType _encryptionType;
+        private string _encryptionString;
         #endregion
 
         #region PROPERTIES
@@ -20,11 +21,12 @@ namespace KorYmeLibrary.SaveSystem
         #endregion
 
         #region CONSTRUCTORS
-        public FileDataHandler(string dataDirPath = "", string dataFileName = "", EncryptionUtilities.EncryptionType encryptionType = EncryptionUtilities.EncryptionType.None)
+        public FileDataHandler(string dataDirPath = "", string dataFileName = "", EncryptionUtilities.EncryptionType encryptionType = EncryptionUtilities.EncryptionType.None, string encryptionString = "")
         {
-            this._dataDirPath = dataDirPath;
-            this._dataFileName = dataFileName;
-            this._encryptionType = encryptionType;
+            _dataDirPath = dataDirPath;
+            _dataFileName = dataFileName;
+            _encryptionType = encryptionType;
+            _encryptionString = encryptionString;
         }
         #endregion
 
@@ -39,7 +41,7 @@ namespace KorYmeLibrary.SaveSystem
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
-                        dataToLoad = EncryptionUtilities.Encrypt(reader.ReadToEnd(), _encryptionType, false);
+                        dataToLoad = EncryptionUtilities.Encrypt(reader.ReadToEnd(), _encryptionType, false, _encryptionString);
                     }
                 }
                 return JsonUtility.FromJson<T>(dataToLoad);
@@ -60,7 +62,7 @@ namespace KorYmeLibrary.SaveSystem
                 {
                     using (StreamWriter writer = new StreamWriter(stream))
                     {
-                        writer.Write(EncryptionUtilities.Encrypt(JsonUtility.ToJson(data, true), _encryptionType, true));
+                        writer.Write(EncryptionUtilities.Encrypt(JsonUtility.ToJson(data, true), _encryptionType, true, _encryptionString));
                     }
                 }
             }

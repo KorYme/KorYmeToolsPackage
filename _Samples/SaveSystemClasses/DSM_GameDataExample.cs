@@ -12,6 +12,6 @@ namespace KorYmeLibrary.SaveSystem
    [System.Serializable]
    public class GameDataExample : GameDataTemplate
    {
-       // Create the values you want to save here
+        // Create the values you want to save here (public values)
    }
 }
