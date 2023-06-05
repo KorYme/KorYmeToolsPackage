@@ -4,6 +4,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using System.Linq;
+using NaughtyAttributes;
 
 namespace KorYmeLibrary.SaveSystem
 {
