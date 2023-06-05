@@ -80,10 +80,12 @@ namespace KorYmeLibrary.SaveSystem
         }
 
         [Button]
+        #if UNITY_EDITOR
         public void DestroyOldData()
         {
             FileDataHandler<T>.DestroyOldData();
         }
-        #endregion
+        #endif
+#endregion
     }
 }
