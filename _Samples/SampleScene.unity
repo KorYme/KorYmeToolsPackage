@@ -360,6 +360,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d6bc35667c6cea49980b8893c6d9412, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fileName: data-example.json
+  _fileName: data_example.json
   _encryptionType: 1
   _saveOnQuit: 1
