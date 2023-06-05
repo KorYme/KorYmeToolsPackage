@@ -35,6 +35,7 @@ namespace KorYmeLibrary.SaveSystem
             Instance = this;
             _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSaveable<T>>().ToList();
             _fileDataHandler = new FileDataHandler<T>(Application.persistentDataPath, _fileName, _encryptionType);
+            LoadGame();
         }
 
         private void Reset()
@@ -60,12 +61,6 @@ namespace KorYmeLibrary.SaveSystem
             {
                 LoadGame();
             }
-        }
-
-        //Start is used to debug
-        private void Start()
-        {
-            LoadGame();
         }
 
         public void NewGame()
