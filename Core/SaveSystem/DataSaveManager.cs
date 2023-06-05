@@ -21,6 +21,7 @@ namespace KorYmeLibrary.SaveSystem
 
         [Header("InGame parameters")]
         [SerializeField] protected bool _saveOnQuit;
+        [SerializeField] protected bool _isOnAndroid;
         #endregion
 
         #region METHODS
@@ -44,9 +45,20 @@ namespace KorYmeLibrary.SaveSystem
 
         private void OnApplicationQuit()
         {
-            if (_saveOnQuit)
+            if (_isOnAndroid || !_saveOnQuit) return;
+            SaveGame();
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            if (!_isOnAndroid || !_saveOnQuit) return;
+            if (pause)
             {
                 SaveGame();
+            }
+            else
+            {
+                LoadGame();
             }
         }
 
