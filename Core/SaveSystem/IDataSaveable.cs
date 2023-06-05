@@ -9,5 +9,7 @@ namespace KorYmeLibrary.SaveSystem
         void LoadData(T gameData);
 
         void SaveData(ref T gameData);
+
+        void InitializeData();
     }
 }

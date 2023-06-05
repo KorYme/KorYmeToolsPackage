@@ -59,6 +59,7 @@ namespace KorYmeLibrary.SaveSystem
         public void NewGame()
         {
             _gameData = new T();
+            _allSaveData.ForEach(x => x.InitializeData());
         }
 
         public void LoadGame()
