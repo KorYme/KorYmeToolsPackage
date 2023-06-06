@@ -21,7 +21,6 @@ namespace KorYmeLibrary.SaveSystem
 
         [Header("InGame parameters")]
         [SerializeField] protected bool _saveOnQuit;
-        [SerializeField] protected bool _isOnAndroid;
         #endregion
 
         #region METHODS
@@ -35,7 +34,9 @@ namespace KorYmeLibrary.SaveSystem
             Instance = this;
             _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSaveable<T>>().ToList();
             _fileDataHandler = new FileDataHandler<T>(Application.persistentDataPath, _fileName, _encryptionType);
+#if UNITY_EDITOR || UNITY_STANDALONE
             LoadGame();
+#endif
         }
 
         private void Reset()
@@ -44,24 +45,28 @@ namespace KorYmeLibrary.SaveSystem
             _saveOnQuit = true;
         }
 
+#if UNITY_EDITOR || UNITY_STANDALONE
         private void OnApplicationQuit()
         {
-            if (_isOnAndroid || !_saveOnQuit) return;
+            if (!_saveOnQuit) return;
             SaveGame();
         }
+#endif
 
-        private void OnApplicationPause(bool pause)
+#if UNITY_ANDROID || UNITY_IOS
+        private void OnApplicationFocus(bool focus)
         {
-            if (!_isOnAndroid || !_saveOnQuit) return;
-            if (pause)
-            {
-                SaveGame();
-            }
-            else
+            if (!_saveOnQuit) return;
+            if (focus)
             {
                 LoadGame();
             }
+            else
+            {
+                SaveGame();
+            }
         }
+#endif
 
         public void NewGame()
         {
@@ -86,13 +91,13 @@ namespace KorYmeLibrary.SaveSystem
             _fileDataHandler.Save(_gameData);
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         [Button]
         public void DestroyOldData()
         {
             FileDataHandler<T>.DestroyOldData();
         }
-        #endif
+#endif
 #endregion
     }
 }
