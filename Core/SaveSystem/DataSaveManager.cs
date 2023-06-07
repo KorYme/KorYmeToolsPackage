@@ -29,7 +29,7 @@ namespace KorYmeLibrary.SaveSystem
         {
             if (Instance != null)
             {
-                Debug.LogError("There is more than one DataSaveManager of this type in the scene");
+                Debug.LogWarning("There is more than one DataSaveManager of this type in the scene");
                 return;
             }
             Instance = this;
