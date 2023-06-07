@@ -14,6 +14,7 @@ namespace KorYmeLibrary.SaveSystem
         protected T _gameData = null;
         protected List<IDataSaveable<T>> _allSaveData;
         protected FileDataHandler<T> _fileDataHandler;
+        protected bool _dataHasBeenLoaded;
 
         [Header("File Storage Config")]
         [SerializeField] protected string _fileName;
@@ -34,9 +35,8 @@ namespace KorYmeLibrary.SaveSystem
             Instance = this;
             _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSaveable<T>>().ToList();
             _fileDataHandler = new FileDataHandler<T>(Application.persistentDataPath, _fileName, _encryptionType);
-#if UNITY_EDITOR || UNITY_STANDALONE
+            _dataHasBeenLoaded = false;
             LoadGame();
-#endif
         }
 
         private void Reset()
@@ -74,8 +74,10 @@ namespace KorYmeLibrary.SaveSystem
             _allSaveData.ForEach(x => x.InitializeData());
         }
 
-        public void LoadGame()
+        public void LoadGame(bool isLoadForced = false)
         {
+            if (_dataHasBeenLoaded && !isLoadForced) return;
+            _dataHasBeenLoaded = true;
             _gameData = _fileDataHandler.Load();
             if (_gameData == null)
             {
@@ -89,6 +91,7 @@ namespace KorYmeLibrary.SaveSystem
         {
             _allSaveData.ForEach(x => x.SaveData(ref _gameData));
             _fileDataHandler.Save(_gameData);
+            _dataHasBeenLoaded = false;
         }
 
 #if UNITY_EDITOR
