@@ -94,13 +94,11 @@ namespace KorYmeLibrary.SaveSystem
             _dataHasBeenLoaded = false;
         }
 
-#if UNITY_EDITOR
         [Button]
         public void DestroyOldData()
         {
             FileDataHandler<T>.DestroyOldData();
         }
-#endif
 #endregion
     }
 }
