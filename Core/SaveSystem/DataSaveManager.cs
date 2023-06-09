@@ -85,6 +85,7 @@ namespace KorYmeLibrary.SaveSystem
             {
                 Debug.LogWarning("No data was found. Initializing with defaults data.");
                 NewGame();
+                return;
             }
             AllSaveData.ForEach(x => x.LoadData(_gameData));
         }
