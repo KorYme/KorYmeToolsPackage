@@ -12,7 +12,10 @@ namespace KorYmeLibrary.SaveSystem
         public static DataSaveManager<T> Instance { get; private set; }
 
         protected T _gameData = null;
-        protected List<IDataSaveable<T>> _allSaveData;
+        protected List<IDataSaveable<T>> AllSaveData
+        {
+            get => FindObjectsOfType<MonoBehaviour>().OfType<IDataSaveable<T>>().ToList();
+        }
         protected FileDataHandler<T> _fileDataHandler;
         protected bool _dataHasBeenLoaded;
 
@@ -33,7 +36,6 @@ namespace KorYmeLibrary.SaveSystem
                 return;
             }
             Instance = this;
-            _allSaveData = FindObjectsOfType<MonoBehaviour>().OfType<IDataSaveable<T>>().ToList();
             _fileDataHandler = new FileDataHandler<T>(Application.persistentDataPath, _fileName, _encryptionType);
             _dataHasBeenLoaded = false;
             LoadGame();
@@ -71,7 +73,7 @@ namespace KorYmeLibrary.SaveSystem
         public void NewGame()
         {
             _gameData = new T();
-            _allSaveData.ForEach(x => x.InitializeData());
+            AllSaveData.ForEach(x => x.InitializeData());
         }
 
         public void LoadGame(bool isLoadForced = false)
@@ -84,12 +86,12 @@ namespace KorYmeLibrary.SaveSystem
                 Debug.LogWarning("No data was found. Initializing with defaults data.");
                 NewGame();
             }
-            _allSaveData.ForEach(x => x.LoadData(_gameData));
+            AllSaveData.ForEach(x => x.LoadData(_gameData));
         }
 
         public void SaveGame()
         {
-            _allSaveData.ForEach(x => x.SaveData(ref _gameData));
+            AllSaveData.ForEach(x => x.SaveData(ref _gameData));
             _fileDataHandler.Save(_gameData);
             _dataHasBeenLoaded = false;
         }
