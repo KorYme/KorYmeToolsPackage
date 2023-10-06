@@ -1,0 +1,16 @@
+{
+    "name": "koryme.toolpackage.wip",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0e64712d151f879449bd14bac8a06feb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
