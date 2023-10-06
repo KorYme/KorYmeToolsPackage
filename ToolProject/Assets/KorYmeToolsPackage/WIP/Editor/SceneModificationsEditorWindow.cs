@@ -19,6 +19,7 @@ namespace KorYmeLibrary.SceneModification
         Color _colorGameObjectLabel;
         Color _colorComponentLabel;
         ObjectLocation _location;
+        bool _isHierarchised;
         #endregion
 
         #region CONTAINERS
@@ -94,48 +95,51 @@ namespace KorYmeLibrary.SceneModification
             EditorGUILayout.LabelField($"[ALLFIELDS({_location})]", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             EditorGUILayout.BeginVertical();
-            //if (!_isHierarchised)
-            //{
-            //    foreach (GameObject gameObject in _allComponentsInScene.Keys.ToArray().OrderBy(x => x.transform.GetSiblingIndex()))
-            //    {
-            //        EditorGUILayout.Space(10);
-            //        if (_foldoutGameObject[gameObject] = EditorGUILayout.Foldout(_foldoutGameObject[gameObject],
-            //            UtilitiesClass.DisplayTextWithColours("[GAMEOBJECT] ", _colorGameObjectLabel) + gameObject.name, true, UtilitiesClass.ToRichText("foldout")))
-            //        {
-            //            EditorGUI.indentLevel++;
-            //            EditorGUILayout.Space(10);
-            //            using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("GameObject",
-            //                gameObject, typeof(GameObject), false);
-            //            foreach (Component component in _allComponentsInScene[gameObject].Keys.ToArray().OrderBy(x => x.name))
-            //            {
-            //                EditorGUILayout.Space(2);
-            //                if (_foldoutComponent[component] = EditorGUILayout.Foldout(_foldoutComponent[component],
-            //                    UtilitiesClass.DisplayTextWithColours("[COMPONENT] ", _colorComponentLabel) + component.GetType().ToString(),
-            //                    true, UtilitiesClass.ToRichText("foldout")))
-            //                {
-            //                    EditorGUI.indentLevel++;
-            //                    foreach (Tuple<FieldInfo, SceneModificationAttribute> tuple in _allComponentsInScene[gameObject][component].Item2)
-            //                    {
-            //                        if ((tuple.Item2._objectLocation == ObjectLocation.Project && gameObject.scene.name != null) || 
-            //                            (tuple.Item2._objectLocation == ObjectLocation.Scene && gameObject.scene.name == null)) continue;
-            //                        SerializedProperty serializedProperty = _allComponentsInScene[gameObject][component].Item1.FindProperty(tuple.Item1.Name);
-            //                        EditorGUI.BeginChangeCheck();
-            //                        EditorGUILayout.PropertyField(serializedProperty, new GUIContent(UtilitiesClass.FieldName(tuple.Item1.Name)));
-            //                        if (EditorGUI.EndChangeCheck())
-            //                        {
-            //                            _allComponentsInScene[gameObject][component].Item1.ApplyModifiedProperties();
-            //                        }
-            //                    }
-            //                    EditorGUI.indentLevel--;
-            //                }
-            //            }
-            //            EditorGUI.indentLevel--;
-            //        }
-            //    }
-            //}
             if (_isLoaded)
             {
-                DisplayFirstObject();
+                if (_isHierarchised)
+                {
+                    DisplayFirstObject();
+                }
+                else
+                {
+                    foreach (GameObject gameObject in _allComponentsInScene.Keys.ToArray().OrderBy(x => x.transform.GetSiblingIndex()))
+                    {
+                        EditorGUILayout.Space(10);
+                        if (_foldoutGameObject[gameObject] = EditorGUILayout.Foldout(_foldoutGameObject[gameObject],
+                            SceneModificationUtilities.DisplayTextWithColours("[GAMEOBJECT] ", _colorGameObjectLabel) + gameObject.name, true, SceneModificationUtilities.ToRichText("foldout")))
+                        {
+                            EditorGUI.indentLevel++;
+                            EditorGUILayout.Space(10);
+                            using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ObjectField("GameObject",
+                                gameObject, typeof(GameObject), false);
+                            foreach (Component component in _allComponentsInScene[gameObject].Keys.ToArray().OrderBy(x => x.name))
+                            {
+                                EditorGUILayout.Space(2);
+                                if (_foldoutComponent[component] = EditorGUILayout.Foldout(_foldoutComponent[component],
+                                    SceneModificationUtilities.DisplayTextWithColours("[COMPONENT] ", _colorComponentLabel) + component.GetType().ToString(),
+                                    true, SceneModificationUtilities.ToRichText("foldout")))
+                                {
+                                    EditorGUI.indentLevel++;
+                                    foreach (Tuple<FieldInfo, SceneModificationAttribute> tuple in _allComponentsInScene[gameObject][component].Item2)
+                                    {
+                                        if ((tuple.Item2._objectLocation == ObjectLocation.Project && gameObject.scene.name != null) ||
+                                            (tuple.Item2._objectLocation == ObjectLocation.Scene && gameObject.scene.name == null)) continue;
+                                        SerializedProperty serializedProperty = _allComponentsInScene[gameObject][component].Item1.FindProperty(tuple.Item1.Name);
+                                        EditorGUI.BeginChangeCheck();
+                                        EditorGUILayout.PropertyField(serializedProperty, new GUIContent(SceneModificationUtilities.FieldName(tuple.Item1.Name)));
+                                        if (EditorGUI.EndChangeCheck())
+                                        {
+                                            _allComponentsInScene[gameObject][component].Item1.ApplyModifiedProperties();
+                                        }
+                                    }
+                                    EditorGUI.indentLevel--;
+                                }
+                            }
+                            EditorGUI.indentLevel--;
+                        }
+                    }
+                }
             }
             else
             {
